@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - IRONSTRENGTH</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar (copiar de tu index.html existente) -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="brand-logo">
+                <span>IRON</span>STRENGTH
+            </a>
+            
+            <div class="navbar-links">
+                <a href="#inicio" class="nav-link">Inicio</a>
+                <a href="#productos" class="nav-link">Productos</a>
+                <a href="#testimonios" class="nav-link">Testimonios</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+                <a href="login.html" class="nav-icon" id="user-icon" aria-label="Mi cuenta">
+                    <i class="fas fa-user"></i>
+                </a>
+                <a href="carrito.html" class="nav-icon cart-icon" aria-label="Carrito">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge">0</span>
+                </a>
+            </div>
+            
+            <button class="menu-toggle" aria-label="Menú" aria-expanded="false">
+                <span class="menu-bar"></span>
+                <span class="menu-bar"></span>
+                <span class="menu-bar"></span>
+            </button>
+        </div>
+    </nav>
+
+
+    <main class="cart-container">
+        <h1>Tu Carrito</h1>
+        
+        <div class="cart-items" id="cartItems">
+            <!-- Productos se cargarán aquí -->
+        </div>
+        
+        <div class="cart-summary">
+            <h3>Resumen</h3>
+            <div id="cartSummary">
+                <!-- Resumen se cargará aquí -->
+            </div>
+            <button id="checkoutBtn" class="checkout-btn">Pagar Ahora</button>
+        </div>
+    </main>
+
+    <!-- Footer (copiar de tu index.html existente) -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3 class="footer-logo"><span>IRON</span>STRENGTH</h3>
+                    <p class="footer-description">Equipamiento profesional para atletas serios desde 2010.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Enlaces rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#productos">Productos</a></li>
+                        <li><a href="#testimonios">Testimonios</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Políticas</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Términos y condiciones</a></li>
+                        <li><a href="#">Política de privacidad</a></li>
+                        <li><a href="#">Garantías</a></li>
+                        <li><a href="#">Envíos y devoluciones</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Métodos de pago</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa" aria-label="Visa"></i>
+                        <i class="fab fa-cc-mastercard" aria-label="Mastercard"></i>
+                        <i class="fab fa-cc-paypal" aria-label="PayPal"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2023 IRON STRENGTH. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartSummaryContainer = document.getElementById('cartSummary');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            if(cartItems.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="empty-cart">
+                        <p>Tu carrito está vacío</p>
+                        <a href="productos.html">Ver productos</a>
+                    </div>
+                `;
+                checkoutBtn.style.display = 'none';
+                return;
+            }
+            
+            // Mostrar productos
+            let subtotal = 0;
+            let cartHTML = '';
+            
+            cartItems.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                cartHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <img src="${item.imageUrl || 'https://via.placeholder.com/150'}" alt="${item.name}">
+                        </div>
+                        <div class="cart-item-info">
+                            <h3>${item.name}</h3>
+                            <p>$${item.price.toFixed(2)} c/u</p>
+                            <div class="quantity-controls">
+                                <button onclick="updateQuantity('${item.id}', -1)">-</button>
+                                <input type="number" value="${item.quantity}" min="1" 
+                                       onchange="updateQuantity('${item.id}', 0, this.value)">
+                                <button onclick="updateQuantity('${item.id}', 1)">+</button>
+                                <button onclick="removeItem('${item.id}')" class="remove-item">Eliminar</button>
+                            </div>
+                            <p>Total: $${itemTotal.toFixed(2)}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItemsContainer.innerHTML = cartHTML;
+            
+            // Mostrar resumen
+            const tax = subtotal * 0.16; // IVA 16%
+            const total = subtotal + tax;
+            
+            cartSummaryContainer.innerHTML = `
+                <p>Subtotal: $${subtotal.toFixed(2)}</p>
+                <p>IVA (16%): $${tax.toFixed(2)}</p>
+                <hr>
+                <h4>Total: $${total.toFixed(2)}</h4>
+            `;
+            
+            // Guardar total para checkout
+            localStorage.setItem('cartTotal', total);
+            
+            checkoutBtn.addEventListener('click', () => {
+                window.location.href = 'checkout.html';
+            });
+        });
+        
+        function updateQuantity(productId, change, newQuantity = null) {
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            const item = cart.find(item => item.id === productId);
+            
+            if(newQuantity !== null) {
+                item.quantity = parseInt(newQuantity);
+            } else {
+                item.quantity += change;
+            }
+            
+            if(item.quantity < 1) item.quantity = 1;
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            location.reload();
+        }
+        
+        function removeItem(productId) {
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            cart = cart.filter(item => item.id !== productId);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            location.reload();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- ... (head igual) ... -->
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body class="auth-page">
+    <!-- Navbar (igual que index.html) -->
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <h2 class="auth-title">INICIAR <span>SESIÓN</span></h2>
+            
+            <div id="loginMessage" class="auth-message"></div>
+            
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                    <a href="#recover" class="text-link small">¿Olvidaste tu contraseña?</a>
+                </div>
+                <button type="submit" class="btn-primary btn-block" id="loginBtn">
+                    <span class="btn-text">INGRESAR</span>
+                    <span class="spinner hidden"></span>
+                </button>
+            </form>
+            
+            <div class="auth-links">
+                <p>¿No tienes cuenta? <a href="registro.html" class="text-link"><span>Regístrate</span></a></p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { auth } from './js/firebase-config.js';
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const btnText = loginBtn.querySelector('.btn-text');
+        const spinner = loginBtn.querySelector('.spinner');
+        const loginMessage = document.getElementById('loginMessage');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Mostrar loading
+            btnText.textContent = 'CARGANDO...';
+            spinner.classList.remove('hidden');
+            loginBtn.disabled = true;
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(
+                    auth,
+                    loginForm.loginEmail.value,
+                    loginForm.loginPassword.value
+                );
+                
+                // Guardar datos del usuario
+                localStorage.setItem('currentUser', JSON.stringify({
+                    name: userCredential.user.displayName || 'Usuario',
+                    email: userCredential.user.email
+                }));
+                
+                // Redirigir a index
+                window.location.href = "index.html?login=success";
+                
+            } catch (error) {
+                // Manejo de errores
+                let message = '';
+                switch(error.code) {
+                    case 'auth/invalid-email':
+                        message = 'Correo electrónico inválido';
+                        break;
+                    case 'auth/user-not-found':
+                        message = 'Usuario no registrado';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'Contraseña incorrecta';
+                        break;
+                    default:
+                        message = 'Error al iniciar sesión';
+                }
+                
+                loginMessage.innerHTML = `
+                    <div class="alert error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        ${message}
+                    </div>
+                `;
+                
+                // Restaurar botón
+                btnText.textContent = 'INGRESAR';
+                spinner.classList.add('hidden');
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

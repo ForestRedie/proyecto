@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - IRONSTRENGTH</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar (copiar de tu index.html existente) -->
+         <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="brand-logo">
+                <span>IRON</span>STRENGTH
+            </a>
+            
+            <div class="navbar-links">
+                <a href="#inicio" class="nav-link">Inicio</a>
+                <a href="#productos" class="nav-link">Productos</a>
+                <a href="#testimonios" class="nav-link">Testimonios</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+                <a href="login.html" class="nav-icon" id="user-icon" aria-label="Mi cuenta">
+                    <i class="fas fa-user"></i>
+                </a>
+                <a href="carrito.html" class="nav-icon cart-icon" aria-label="Carrito">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge">0</span>
+                </a>
+            </div>
+            
+            <button class="menu-toggle" aria-label="Menú" aria-expanded="false">
+                <span class="menu-bar"></span>
+                <span class="menu-bar"></span>
+                <span class="menu-bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="products-container">
+        <h1>Nuestros Productos</h1>
+
+        <div class="product-filters">
+            <select id="categoryFilter" class="filter-select">
+                <option value="all">Todas las categorías</option>
+                <option value="barras">Barras</option>
+                <option value="mancuernas">Mancuernas</option>
+            </select>
+        </div>
+        
+        <div class="products-grid" id="productsGrid">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i> Cargando productos...
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (copiar de tu index.html existente) -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3 class="footer-logo"><span>IRON</span>STRENGTH</h3>
+                    <p class="footer-description">Equipamiento profesional para atletas serios desde 2010.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Enlaces rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#productos">Productos</a></li>
+                        <li><a href="#testimonios">Testimonios</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Políticas</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Términos y condiciones</a></li>
+                        <li><a href="#">Política de privacidad</a></li>
+                        <li><a href="#">Garantías</a></li>
+                        <li><a href="#">Envíos y devoluciones</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Métodos de pago</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa" aria-label="Visa"></i>
+                        <i class="fab fa-cc-mastercard" aria-label="Mastercard"></i>
+                        <i class="fab fa-cc-paypal" aria-label="PayPal"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2023 IRON STRENGTH. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Notificación de carrito -->
+    <div class="cart-notification" id="cartNotification">
+        Producto añadido! <a href="carrito.html">Ir al carrito</a>
+    </div>
+
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { getDocs, collection } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Función para añadir al carrito
+        function addToCart(product) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItem = cart.find(item => item.id === product.id);
+            
+            if(existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                product.quantity = 1;
+                cart.push(product);
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Mostrar notificación
+            const notification = document.getElementById('cartNotification');
+            notification.style.display = 'block';
+            setTimeout(() => notification.style.display = 'none', 3000);
+        }
+
+        async function loadProducts() {
+            try {
+                const productsGrid = document.getElementById('productsGrid');
+                const querySnapshot = await getDocs(collection(db, 'products'));
+                
+                productsGrid.innerHTML = '';
+                
+                querySnapshot.forEach(doc => {
+                    const product = { id: doc.id, ...doc.data() };
+                    const price = product.price ? parseFloat(product.price) : 0;
+                    const stock = product.stock || 0;
+                    
+                    productsGrid.innerHTML += `
+                        <div class="product-card">
+                            <div class="product-image-container">
+                                <img src="${product.imageUrl || 'https://via.placeholder.com/300'}" 
+                                     alt="${product.name}" 
+                                     loading="lazy"
+                                     onerror="this.src='https://via.placeholder.com/300'">
+                            </div>
+                            <div class="product-info">
+                                <h3>${product.name}</h3>
+                                <p class="price">$${price.toFixed(2)}</p>
+                                ${stock > 0 ? 
+                                    `<button class="add-to-cart" data-id="${product.id}">Añadir al carrito</button>` : 
+                                    `<p class="out-of-stock">Agotado</p>`}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Event listeners para botones
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const productId = button.getAttribute('data-id');
+                        const product = querySnapshot.docs.find(doc => doc.id === productId).data();
+                        addToCart({ id: productId, ...product });
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error:", error);
+                productsGrid.innerHTML = '<p class="error">Error al cargar productos</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+</html>
