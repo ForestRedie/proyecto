@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - LUMINA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="brand-logo">LUMINA</a>
+            <div class="navbar-links">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="productos.html" class="nav-link">Productos</a>
+                <a href="login.html" class="nav-icon" id="user-icon"><i class="fas fa-user"></i></a>
+                <a href="carrito.html" class="nav-icon cart-icon"><i class="fas fa-shopping-bag"></i> <span class="cart-badge" id="cart-count">0</span></a>
+            </div>
+            <button class="menu-toggle"><span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span></button>
+        </div>
+    </nav>
+
+    <main class="main-content products-page">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nuestra Colección</h2>
+                <p class="section-description">Descubre nuestras prendas exclusivas</p>
+            </div>
+            
+            <div class="product-filters-container">
+                <select id="category-filter" class="filter-select-page">
+                    <option value="all">Todas las categorías</option>
+                    <option value="vestidos">Vestidos</option>
+                    <option value="blusas">Blusas</option>
+                    <option value="pantalones">Pantalones</option>
+                </select>
+            </div>
+            
+            <div class="products-grid-page" id="productsContainer">
+                <!-- Los productos se cargarán aquí dinámicamente -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner"></i>
+                    <p>Cargando productos...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3 class="footer-logo">LUMINA</h3>
+                    <p class="footer-description">Moda femenina elegante y atemporal para la mujer moderna.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Enlaces rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="productos.html">Productos</a></li>
+                        <li><a href="#testimonios">Testimonios</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Políticas</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Términos y condiciones</a></li>
+                        <li><a href="#">Política de privacidad</a></li>
+                        <li><a href="#">Garantías</a></li>
+                        <li><a href="#">Envíos y devoluciones</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Métodos de pago</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa" aria-label="Visa"></i>
+                        <i class="fab fa-cc-mastercard" aria-label="Mastercard"></i>
+                        <i class="fab fa-cc-paypal" aria-label="PayPal"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2023 LUMINA. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="cart-notification" id="cart-notification">
+        Producto añadido al carrito <a href="carrito.html">Ver carrito</a>
+    </div>
+
+    <script type="module">
+        // Importaciones unificadas (Firebase v9 modular)
+        import { db } from './js/firebase-config.js';
+        import { 
+            collection, 
+            getDocs, 
+            query, 
+            where,
+            orderBy
+        } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js';
+
+        // Función principal para cargar productos
+        const loadProducts = async (category = 'all') => {
+            try {
+                const container = document.getElementById('productsContainer');
+                if (!container) throw new Error("Contenedor no encontrado");
+
+                container.innerHTML = `
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner"></i>
+                        <p>Cargando productos...</p>
+                    </div>
+                `;
+
+                // Consulta a Firestore
+                let q;
+                if (category === 'all') {
+                    q = query(collection(db, 'products'), orderBy('name'));
+                } else {
+                    q = query(
+                        collection(db, 'products'), 
+                        where('category', '==', category),
+                        orderBy('name')
+                    );
+                }
+
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="no-products">
+                            <i class="fas fa-box-open"></i>
+                            <p>No hay productos en esta categoría</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Renderizado
+                container.innerHTML = snapshot.docs.map(doc => {
+                    const p = doc.data();
+                    return `
+                        <div class="product-card-page">
+                            <div class="product-image-page">
+                                <img src="${p.imageUrl || 'img/placeholder.jpg'}" 
+                                    alt="${p.name}" 
+                                    onerror="this.src='img/placeholder.jpg'">
+                                ${p.stock <= 0 ? '<span class="product-badge">Agotado</span>' : ''}
+                            </div>
+                            <div class="product-info-page">
+                                <span class="product-category-page">${p.category}</span>
+                                <h3 class="product-title-page">${p.name}</h3>
+                                <div class="price-container-page">
+                                    <span class="current-price-page">S/${p.price.toFixed(2)}</span>
+                                </div>
+                                <button class="add-to-cart-btn-page" data-id="${doc.id}" ${p.stock <= 0 ? 'disabled' : ''}>
+                                    ${p.stock <= 0 ? 'Agotado' : 'Añadir al carrito'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Agregar event listeners a los botones
+                document.querySelectorAll('.add-to-cart-btn-page').forEach(button => {
+                    button.addEventListener('click', addToCart);
+                });
+
+                console.log(`${snapshot.size} productos cargados`);
+
+            } catch (error) {
+                console.error("Error en loadProducts:", error);
+                const container = document.getElementById('productsContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Error al cargar productos</p>
+                            <button onclick="window.location.reload()">Reintentar</button>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        // Función para añadir al carrito (simplificada)
+        function addToCart(e) {
+            const productId = e.target.getAttribute('data-id');
+            const notification = document.getElementById('cart-notification');
+            
+            // Aquí iría tu lógica para añadir al carrito
+            
+            // Mostrar notificación
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+            
+            console.log(`Producto ${productId} añadido al carrito`);
+        }
+
+        // Inicialización cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            // Carga inicial
+            loadProducts();
+
+            // Evento para filtros
+            document.getElementById('category-filter')?.addEventListener('change', (e) => {
+                loadProducts(e.target.value);
+            });
+        });
+    </script>
+</body>
+</html>
