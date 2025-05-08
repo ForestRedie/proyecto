@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deserción Escolar en Adolescentes Mexicanos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Deserción Escolar MX</div>
+                <div class="nav-links">
+                    <a href="#inicio">Inicio</a>
+                    <a href="#estadisticas">Estadísticas</a>
+                    <a href="#estados">Por Estados</a>
+                    <a href="#" id="cuestionario-btn">Cuestionario</a>
+                </div>
+                <div id="login-status">
+                    <button id="login-btn" class="btn btn-primary">Iniciar Sesión</button>
+                    <button id="logout-btn" class="btn btn-logout">Cerrar Sesión</button>
+                    <span id="username-display" style="display: none;"></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="inicio">
+        <div class="container">
+            <h1>Deserción Escolar en Adolescentes Mexicanos</h1>
+            <p>Un análisis comprensivo sobre las causas y estadísticas de la deserción escolar en adolescentes mexicanos a nivel nacional.</p>
+            <div id="restricted-content-notice" style="display: none;">
+                <p class="warning">Para acceder a todo el contenido, por favor <a href="#" id="login-link">inicia sesión</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <section id="introduccion">
+            <h2>Introducción al Problema</h2>
+            <p>La deserción escolar representa uno de los problemas más graves en el sistema educativo mexicano. Cada año, miles de adolescentes abandonan sus estudios debido a diversos factores socioeconómicos, familiares y personales.</p>
+            <p>Este sitio recopila información y estadísticas actualizadas sobre este fenómeno, con el objetivo de visibilizar la situación y proporcionar herramientas para entender y combatir la deserción escolar en México.</p>
+        </section>
+
+        <section id="estadisticas" class="restricted-section">
+            <div class="login-required-overlay">
+                <div class="login-message">
+                    <p>Esta sección requiere inicio de sesión</p>
+                    <button id="estadisticas-login-btn" class="btn btn-primary">Iniciar Sesión</button>
+                </div>
+            </div>
+            <h2>Estadísticas Nacionales</h2>
+            <p>A continuación se presentan las principales estadísticas de deserción escolar por grado académico y año en México.</p>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Deserción por nivel educativo (2022-2023)</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="nivelEducativoChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Evolución temporal (2018-2023)</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="evolucionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Deserción por género</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="generoChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Principales razones de deserción</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="razonesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="estados" class="restricted-section">
+            <div class="login-required-overlay">
+                <div class="login-message">
+                    <p>Esta sección requiere inicio de sesión</p>
+                    <button id="estados-login-btn" class="btn btn-primary">Iniciar Sesión</button>
+                </div>
+            </div>
+            <h2>Deserción Escolar por Estados</h2>
+            <p>Selecciona un estado para ver información detallada sobre la deserción escolar en esa entidad.</p>
+            
+            <div class="mapa-container">
+                <div class="mapa" id="mapa-estados">
+                    <!-- Estados ordenados alfabéticamente -->
+                    <div class="estado" data-estado="aguascalientes">Aguascalientes</div>
+                    <div class="estado" data-estado="baja-california">Baja California</div>
+                    <div class="estado" data-estado="baja-california-sur">Baja California Sur</div>
+                    <div class="estado" data-estado="campeche">Campeche</div>
+                    <div class="estado" data-estado="chiapas">Chiapas</div>
+                    <div class="estado" data-estado="chihuahua">Chihuahua</div>
+                    <div class="estado" data-estado="coahuila">Coahuila</div>
+                    <div class="estado" data-estado="colima">Colima</div>
+                    <div class="estado" data-estado="durango">Durango</div>
+                    <div class="estado" data-estado="estado-de-mexico">Estado de México</div>
+                    <div class="estado" data-estado="guanajuato">Guanajuato</div>
+                    <div class="estado" data-estado="guerrero">Guerrero</div>
+                    <div class="estado" data-estado="hidalgo">Hidalgo</div>
+                    <div class="estado" data-estado="jalisco">Jalisco</div>
+                    <div class="estado" data-estado="michoacan">Michoacán</div>
+                    <div class="estado" data-estado="morelos">Morelos</div>
+                    <div class="estado" data-estado="nayarit">Nayarit</div>
+                    <div class="estado" data-estado="nuevo-leon">Nuevo León</div>
+                    <div class="estado" data-estado="oaxaca">Oaxaca</div>
+                    <div class="estado" data-estado="puebla">Puebla</div>
+                    <div class="estado" data-estado="queretaro">Querétaro</div>
+                    <div class="estado" data-estado="quintana-roo">Quintana Roo</div>
+                    <div class="estado" data-estado="san-luis-potosi">San Luis Potosí</div>
+                    <div class="estado" data-estado="sinaloa">Sinaloa</div>
+                    <div class="estado" data-estado="sonora">Sonora</div>
+                    <div class="estado" data-estado="tabasco">Tabasco</div>
+                    <div class="estado" data-estado="tamaulipas">Tamaulipas</div>
+                    <div class="estado" data-estado="tlaxcala">Tlaxcala</div>
+                    <div class="estado" data-estado="veracruz">Veracruz</div>
+                    <div class="estado" data-estado="yucatan">Yucatán</div>
+                    <div class="estado" data-estado="zacatecas">Zacatecas</div>
+                    <div class="estado" data-estado="cdmx">Ciudad de México</div>
+                </div>
+            </div>
+            
+            <div class="estado-info" id="estado-info">
+                <h3 id="estado-nombre">Nombre del Estado</h3>
+                <p id="estado-descripcion"></p>
+                
+                <div class="estado-stats">
+                    <div class="estado-stat-card">
+                        <h4>Tasa de deserción general</h4>
+                        <div class="value" id="estado-tasa-general">0%</div>
+                    </div>
+                    <div class="estado-stat-card">
+                        <h4>Deserción en secundaria</h4>
+                        <div class="value" id="estado-tasa-secundaria">0%</div>
+                    </div>
+                    <div class="estado-stat-card">
+                        <h4>Deserción en preparatoria</h4>
+                        <div class="value" id="estado-tasa-preparatoria">0%</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="estadoChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="cuestionario-section" class="restricted-section">
+            <div class="login-required-overlay">
+                <div class="login-message">
+                    <p>Esta sección requiere inicio de sesión</p>
+                    <button id="cuestionario-login-btn" class="btn btn-primary">Iniciar Sesión</button>
+                </div>
+            </div>
+            <h2>Cuestionario sobre Deserción Escolar</h2>
+            <p>Tu participación es muy importante. Por favor completa este cuestionario para ayudarnos a entender mejor las causas de la deserción escolar entre adolescentes.</p>
+            
+            <div class="form-container">
+                <form id="cuestionario-form">
+                    <div class="form-group">
+                        <label for="edad">¿Cuántos años tienes?</label>
+                        <input type="number" id="edad" name="edad" min="12" max="30" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="genero">Género:</label>
+                        <select id="genero" name="genero" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="otro">Otro</option>
+                            <option value="prefiero-no-decir">Prefiero no decir</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="escolaridad">¿Qué nivel de escolaridad cursas actualmente?</label>
+                        <select id="escolaridad" name="escolaridad" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="secundaria-1">Secundaria - 1° grado</option>
+                            <option value="secundaria-2">Secundaria - 2° grado</option>
+                            <option value="secundaria-3">Secundaria - 3° grado</option>
+                            <option value="preparatoria-1">Preparatoria/Bachillerato - 1° grado</option>
+                            <option value="preparatoria-2">Preparatoria/Bachillerato - 2° grado</option>
+                            <option value="preparatoria-3">Preparatoria/Bachillerato - 3° grado</option>
+                            <option value="universidad">Universidad</option>
+                            <option value="sin-estudios">No estudio actualmente</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="estado-residencia">Estado donde resides:</label>
+                        <select id="estado-residencia" name="estado-residencia" required>
+                            <option value="">Selecciona un estado</option>
+                            <option value="aguascalientes">Aguascalientes</option>
+                            <option value="baja-california">Baja California</option>
+                            <option value="baja-california-sur">Baja California Sur</option>
+                            <option value="campeche">Campeche</option>
+                            <option value="chiapas">Chiapas</option>
+                            <option value="chihuahua">Chihuahua</option>
+                            <option value="coahuila">Coahuila</option>
+                            <option value="colima">Colima</option>
+                            <option value="durango">Durango</option>
+                            <option value="estado-de-mexico">Estado de México</option>
+                            <option value="guanajuato">Guanajuato</option>
+                            <option value="guerrero">Guerrero</option>
+                            <option value="hidalgo">Hidalgo</option>
+                            <option value="jalisco">Jalisco</option>
+                            <option value="michoacan">Michoacán</option>
+                            <option value="morelos">Morelos</option>
+                            <option value="nayarit">Nayarit</option>
+                            <option value="nuevo-leon">Nuevo León</option>
+                            <option value="oaxaca">Oaxaca</option>
+                            <option value="puebla">Puebla</option>
+                            <option value="queretaro">Querétaro</option>
+                            <option value="quintana-roo">Quintana Roo</option>
+                            <option value="san-luis-potosi">San Luis Potosí</option>
+                            <option value="sinaloa">Sinaloa</option>
+                            <option value="sonora">Sonora</option>
+                            <option value="tabasco">Tabasco</option>
+                            <option value="tamaulipas">Tamaulipas</option>
+                            <option value="tlaxcala">Tlaxcala</option>
+                            <option value="veracruz">Veracruz</option>
+                            <option value="yucatan">Yucatán</option>
+                            <option value="zacatecas">Zacatecas</option>
+                            <option value="cdmx">Ciudad de México</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>¿Has considerado abandonar tus estudios?</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="abandono-si" name="abandono" value="si" required>
+                                <label for="abandono-si">Sí</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="abandono-no" name="abandono" value="no">
+                                <label for="abandono-no">No</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="abandono-ya" name="abandono" value="ya-abandone">
+                                <label for="abandono-ya">Ya abandoné mis estudios</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="razones">¿Cuáles son las principales razones por las que has considerado abandonar o ya abandonaste tus estudios? (Selecciona hasta 3)</label>
+                        <div class="checkbox-group">
+                            <div>
+                                <input type="checkbox" id="razon-economica" name="razones[]" value="economica">
+                                <label for="razon-economica">Problemas económicos</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="razon-trabajo" name="razones[]" value="trabajo">
+                                <label for="razon-trabajo">Necesidad de trabajar</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="razon-familiar" name="razones[]" value="familiar">
+                                <label for="razon-familiar">Problemas familiares</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="razon-academica" name="razones[]" value="academica">
+                                <label for="razon-academica">Dificultades académicas</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="razon-bullying" name="razones[]" value="bullying">
+                                <label for="razon-bullying">Acoso escolar (bullying)</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="razon-interes" name="razones[]" value="interes">
+                                <label for="razon-interes">Falta de interés en los estudios</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="razon-embarazo" name="razones[]" value="embarazo">
+                                <label for="razon-embarazo">Embarazo o paternidad</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="razon-otra" name="razones[]" value="otra">
+                                <label for="razon-otra">Otra razón</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comentarios">¿Hay algo más que quieras compartir sobre tu experiencia educativa?</label>
+                        <textarea id="comentarios" name="comentarios"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Enviar respuestas</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>© 2025 - Deserción Escolar MX - Todos los derechos reservados</p>
+                <p>Este sitio web es un proyecto educativo para analizar y combatir la deserción escolar en México.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de inicio de sesión -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Iniciar Sesión</h3>
+                <button class="close">&times;</button>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Ingresar</button>
+            </form>
+            <div class="form-footer">
+                <p>¿No tienes cuenta? <a href="#" id="register-link">Regístrate aquí</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de registro -->
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registro de Usuario</h3>
+                <button class="close">&times;</button>
+            </div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-username">Usuario:</label>
+                    <input type="text" id="reg-username" name="reg-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Correo electrónico:</label>
+                    <input type="email" id="reg-email" name="reg-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Contraseña:</label>
+                    <input type="password" id="reg-password" name="reg-password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm-password">Confirmar contraseña:</label>
+                    <input type="password" id="reg-confirm-password" name="reg-confirm-password" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+            </form>
+            <div class="form-footer">
+                <p>¿Ya tienes cuenta? <a href="#" id="login-link-from-register">Inicia sesión aquí</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
